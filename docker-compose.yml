@@ -9,6 +9,12 @@ services:
       - PARQUET_DIR=/data/parquet
     volumes:
       - mono-data:/data
+    healthcheck:
+      test: ["CMD", "test", "-f", "/data/parquet/transactions.parquet"]
+      interval: 5s
+      timeout: 3s
+      retries: 120
+      start_period: 10s
     restart: unless-stopped
 
   rill:
@@ -25,7 +31,7 @@ services:
       --no-open
     depends_on:
       sync:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
