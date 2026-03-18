@@ -1,0 +1,69 @@
+type: metrics_view
+model: transactions
+timeseries: time
+smallest_time_grain: day
+first_day_of_week: 1
+
+dimensions:
+  - name: account_name
+    column: account_name
+    label: Счёт
+  - name: category
+    column: category
+    label: Категория
+  - name: merchant
+    column: merchant
+    label: Мерчант
+  - name: description
+    column: description
+    label: Описание
+  - name: tx_type
+    column: tx_type
+    label: Тип
+  - name: currency
+    column: currency
+    label: Валюта
+  - name: hold
+    column: hold
+    label: Холд
+  - name: comment
+    column: comment
+    label: Комментарий
+  - name: day_of_week
+    column: day_of_week
+    label: День недели
+  - name: month
+    column: month
+    label: Месяц
+
+measures:
+  - name: total_spent
+    expression: "SUM(CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END)"
+    label: Расходы
+    format_d3: ",.2f"
+    valid_percent_of_total: true
+  - name: total_income
+    expression: "SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END)"
+    label: Доходы
+    format_d3: ",.2f"
+    valid_percent_of_total: true
+  - name: net
+    expression: "SUM(amount)"
+    label: Нетто
+    format_d3: ",.2f"
+  - name: tx_count
+    expression: "COUNT(*)"
+    label: Транзакций
+    format_preset: humanize
+  - name: avg_check
+    expression: "AVG(CASE WHEN amount < 0 THEN ABS(amount) END)"
+    label: Средний чек
+    format_d3: ",.2f"
+  - name: max_expense
+    expression: "MAX(CASE WHEN amount < 0 THEN ABS(amount) END)"
+    label: Макс. трата
+    format_d3: ",.2f"
+  - name: total_cashback
+    expression: "SUM(cashback_amount)"
+    label: Кэшбэк
+    format_d3: ",.2f"

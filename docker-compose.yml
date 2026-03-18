@@ -1,0 +1,32 @@
+services:
+  sync:
+    build:
+      context: .
+      dockerfile: Dockerfile.sync
+    environment:
+      - MONO_TOKEN=${MONO_TOKEN}
+      - DB_PATH=/data/db/mono.duckdb
+      - PARQUET_DIR=/data/parquet
+    volumes:
+      - mono-data:/data
+    restart: unless-stopped
+
+  rill:
+    image: rilldata/rill:latest
+    platform: linux/amd64
+    ports:
+      - "9010:9009"
+    volumes:
+      - mono-data:/data:ro
+      - ./rill:/project
+    command: >
+      start /project
+      --port 9009
+      --no-open
+    depends_on:
+      sync:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  mono-data:
