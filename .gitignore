@@ -10,3 +10,4 @@ venv/
 .claude/
 rill/tmp/
 data/
+.idea/
